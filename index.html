@@ -17,37 +17,17 @@
     * { -ms-overflow-style: none; scrollbar-width: none; }
     
     /* Animaciones UX */
-    @keyframes slideDown {
-      0% { transform: translateY(-120%); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes slideDownToast {
-      0% { transform: translateY(-150%); opacity: 0; }
-      10% { transform: translateY(0); opacity: 1; }
-      90% { transform: translateY(0); opacity: 1; }
-      100% { transform: translateY(-150%); opacity: 0; }
-    }
-    @keyframes scanline {
-      0% { top: 0%; opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { top: 100%; opacity: 0; }
-    }
-    .push-notification {
-      animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    .toast-notification {
-      animation: slideDownToast 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    .scanner-line {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: #2F7D4A;
-      box-shadow: 0 0 15px #2F7D4A, 0 0 30px #2F7D4A;
-      animation: scanline 2.5s infinite linear;
-    }
+    @keyframes slideDown { 0% { transform: translateY(-120%); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    @keyframes slideDownToast { 0% { transform: translateY(-150%); opacity: 0; } 10% { transform: translateY(0); opacity: 1; } 90% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-150%); opacity: 0; } }
+    @keyframes scanline { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes popUp { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    
+    .push-notification { animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .toast-notification { animation: slideDownToast 3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .scanner-line { position: absolute; left: 0; width: 100%; height: 3px; background: #2F7D4A; box-shadow: 0 0 15px #2F7D4A, 0 0 30px #2F7D4A; animation: scanline 2.5s infinite linear; }
+    .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 26, 60, 0.6); backdrop-filter: blur(4px); z-index: 9999; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.2s ease-out; }
+    .modal-box { background: #FFF; border-radius: 28px; padding: 24px; width: 85%; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: popUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   </style>
   <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
@@ -60,7 +40,6 @@
   </div>
 
   <script type="text/babel">
-    // PALETA DE COLORES
     const SF_COLORS = {
       darkBlue: "#051A3C", 
       blueSoft: "#EAF0F8",
@@ -78,11 +57,11 @@
       muted: "#6B7B72",
       line: "rgba(26, 43, 76, 0.1)",
     };
-   // ESTILOS NATIVOS A PRUEBA DE FALLOS
+
     const SF_STYLES = {
       screen: { height: "100%", width: "100%", background: SF_COLORS.bgLight, color: SF_COLORS.ink, fontFamily: "Poppins, Nunito, sans-serif", display: "flex", flexDirection: "column", position: "relative" },
       header: { padding: "54px 20px 20px", background: SF_COLORS.darkBlue, color: SF_COLORS.white, position: "sticky", top: 0, zIndex: 50, boxShadow: "0 4px 20px rgba(26, 43, 76, 0.15)" },
-      body: { padding: "20px 20px 110px", display: "flex", flexDirection: "column", gap: 16, overflowY: "auto", flex: 1 },
+      body: { padding: "16px 20px 110px", display: "flex", flexDirection: "column", gap: 14, overflowY: "auto", flex: 1 },
       card: { background: SF_COLORS.white, borderRadius: 24, padding: 20, boxShadow: "0 8px 24px rgba(26, 43, 76, 0.05)", border: `1px solid ${SF_COLORS.line}` },
       cardGreen: { background: `linear-gradient(135deg, ${SF_COLORS.green} 0%, ${SF_COLORS.greenDark} 100%)`, color: SF_COLORS.white, borderRadius: 24, padding: 20, boxShadow: "0 8px 24px rgba(47, 125, 74, 0.25)" },
       row: { display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 },
@@ -97,7 +76,6 @@
       input: { width: "100%", boxSizing: "border-box", border: `1px solid ${SF_COLORS.line}`, background: SF_COLORS.bgLight, borderRadius: 16, padding: "16px", fontSize: 14, color: SF_COLORS.ink, fontFamily: "Nunito, sans-serif", outline: "none", transition: "border 0.2s" }
     };
 
-    // DATOS DE PRUEBA
     const SF_INVENTORY = [
       { id: 1, name: "Yogurt natural", category: "Lácteo", location: "Refrigeradora", expiresIn: 1, qty: "1 botella", icon: "🥛", maxLife: 14 },
       { id: 2, name: "Tomate", category: "Verdura", location: "Refrigeradora", expiresIn: 2, qty: "4 unidades", icon: "🍅", maxLife: 10 },
@@ -118,22 +96,47 @@
       return { label: `Quedan ${days} días`, color: SF_COLORS.greenDark, bg: SF_COLORS.greenSoft };
     }
 
-    // COMPONENTES BASE
-    function SFHeader({ title, subtitle, onBack }) {
+    // MODAL DE CIERRE DE SESIÓN CUSTOMIZADO
+    function SFLogoutModal({ onConfirm, onCancel }) {
+      return (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <div style={{ fontSize: 48, marginBottom: 12 }}>🚪</div>
+            <h3 style={{ margin: "0 0 8px", fontSize: 18, fontWeight: 900, color: SF_COLORS.darkBlue }}>¿Cerrar Sesión?</h3>
+            <p style={{ margin: "0 0 24px", fontSize: 13, color: SF_COLORS.muted }}>Tendrás que volver a ingresar tus credenciales para entrar a tu cocina.</p>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={onCancel} style={{ flex: 1, padding: "14px", borderRadius: 14, border: "none", background: SF_COLORS.blueSoft, color: SF_COLORS.darkBlue, fontWeight: 800, cursor: "pointer" }}>Cancelar</button>
+              <button onClick={onConfirm} style={{ flex: 1, padding: "14px", borderRadius: 14, border: "none", background: SF_COLORS.red, color: "#FFF", fontWeight: 800, cursor: "pointer" }}>Salir</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // CABECERA CON MENÚ HAMBURGUESA A LA IZQUIERDA
+    function SFHeader({ title, subtitle, onBack, onOpenMenu }) {
       return (
         <header style={SF_STYLES.header}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-            {onBack && (
-              <button onClick={onBack} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#FFF", borderRadius: 12, width: 36, height: 36, fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>←</button>
+            
+            {/* LADO IZQUIERDO: Botón de Atrás O Menú Hamburguesa */}
+            {onBack ? (
+              <button onClick={onBack} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#FFF", borderRadius: 12, width: 40, height: 40, fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, padding: 0 }}>←</button>
+            ) : onOpenMenu ? (
+              <div onClick={onOpenMenu} style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(255,255,255,0.1)", display: "flex", justifyContent: "center", alignItems: "center", fontSize: 24, flexShrink: 0, cursor: "pointer", color: "#FFF" }} title="Abrir Menú">
+                ≡
+              </div>
+            ) : (
+              <div style={{ width: 40, height: 40, flexShrink: 0 }}></div>
             )}
+            
+            {/* TEXTOS CENTRALES */}
             <div style={{ flex: 1 }}>
               <p style={{ margin: 0, fontSize: 11, fontWeight: 800, letterSpacing: "0.05em", color: SF_COLORS.blueSoft }}>SMARTFOOD AI</p>
               <h1 style={{ ...SF_STYLES.title, color: SF_COLORS.white }}>{title}</h1>
               {subtitle && <p style={{ margin: "4px 0 0", fontSize: 13, color: "rgba(255,255,255,0.8)" }}>{subtitle}</p>}
             </div>
-            {!onBack && (
-              <div style={{ width: 40, height: 40, borderRadius: 20, background: SF_COLORS.white, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 20, boxShadow: "0 4px 10px rgba(0,0,0,0.2)" }}>👤</div>
-            )}
+            
           </div>
         </header>
       );
@@ -142,7 +145,7 @@
     function SFButton({ children, variant = "primary", onClick, style }) {
       const isPrimary = variant === "primary";
       return (
-        <button onClick={onClick} style={{ border: isPrimary ? 0 : `2px solid ${SF_COLORS.darkBlue}`, borderRadius: 16, padding: "16px 20px", fontFamily: "Poppins, Nunito, sans-serif", fontWeight: 800, fontSize: 14, background: isPrimary ? SF_COLORS.darkBlue : "transparent", color: isPrimary ? SF_COLORS.white : SF_COLORS.darkBlue, boxShadow: isPrimary ? "0 8px 20px rgba(26, 43, 76, 0.2)" : "none", cursor: "pointer", width: "100%", transition: "all 0.1s", ...style }}>
+        <button onClick={onClick} style={{ border: isPrimary ? 0 : `2px solid ${SF_COLORS.darkBlue}`, borderRadius: 16, padding: "16px 20px", fontFamily: "Poppins, Nunito, sans-serif", fontWeight: 800, fontSize: 14, background: isPrimary ? SF_COLORS.darkBlue : "transparent", color: isPrimary ? SF_COLORS.white : SF_COLORS.darkBlue, boxShadow: isPrimary ? "0 8px 20px rgba(26, 43, 76, 0.2)" : "none", cursor: "pointer", width: "100%", transition: "all 0.1s", display: "flex", justifyContent: "center", alignItems: "center", ...style }}>
           {children}
         </button>
       );
@@ -157,15 +160,14 @@
     }
 
     /* ========================================================
-       PANTALLAS DE AUTENTICACIÓN (LOGIN & REGISTRO)
+       PANTALLAS DE AUTENTICACIÓN
        ======================================================== */
     function SCRLogin({ onLogin, onGoToRegister }) {
       return (
         <div style={{ ...SF_STYLES.screen, background: SF_COLORS.darkBlue, padding: 24, justifyContent: "center" }}>
-          <div style={{ textAlign: "center", marginBottom: 40 }}>
-            {/* LOGO ACTUALIZADO CON LA IMAGEN PROPORCIONADA */}
-            <img src="./logo.jpeg" alt="Smartfood Logo" style={{ width: 120, height: 120, borderRadius: 28, objectFit: "cover", marginBottom: 16, boxShadow: "0 12px 30px rgba(0,0,0,0.4)" }} />
-            <h1 style={{ margin: 0, fontSize: 32, fontWeight: 900, color: SF_COLORS.white, letterSpacing: "1px" }}>SMARTFOOD</h1>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <img src="./logo.jpeg" alt="Smartfood Logo" style={{ width: 120, height: 120, objectFit: "contain", borderRadius: 32, marginBottom: 12, boxShadow: "0 12px 30px rgba(0,0,0,0.3)" }} />
+            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: SF_COLORS.white, letterSpacing: "1px" }}>SMARTFOOD</h1>
             <p style={{ margin: "4px 0 0", fontSize: 14, color: SF_COLORS.blueSoft }}>Sostenibilidad en tu cocina</p>
           </div>
 
@@ -173,14 +175,18 @@
             <h2 style={{ ...SF_STYLES.h2, marginBottom: 20, fontSize: 20 }}>Iniciar Sesión</h2>
             
             <input style={{ ...SF_STYLES.input, marginBottom: 12 }} placeholder="Correo electrónico" type="email" defaultValue="andrea@ejemplo.com" />
-            <input style={{ ...SF_STYLES.input, marginBottom: 24 }} placeholder="Contraseña" type="password" defaultValue="123456" />
+            <input style={{ ...SF_STYLES.input, marginBottom: 12 }} placeholder="Contraseña" type="password" defaultValue="123456" />
+            
+            <div style={{ textAlign: "right", marginBottom: 24 }}>
+              <span style={{ fontSize: 12, color: SF_COLORS.darkBlue, fontWeight: 800, cursor: "pointer" }}>¿Olvidaste tu contraseña?</span>
+            </div>
             
             <SFButton onClick={onLogin}>Ingresar a mi Cocina</SFButton>
             
             <div style={{ textAlign: "center", margin: "24px 0 16px", color: SF_COLORS.muted, fontSize: 12, fontWeight: 700 }}>O ingresa con</div>
             
             <SFButton variant="secondary" style={{ border: `1px solid ${SF_COLORS.line}`, color: SF_COLORS.ink, boxShadow: "none" }}>
-              <span style={{ marginRight: 8 }}>🔵</span> Continuar con Google
+              <img src="./google.png" alt="Google" style={{ width: 18, height: 18, marginRight: 8 }} /> Continuar con Google
             </SFButton>
 
             <p style={{ textAlign: "center", margin: "24px 0 0", fontSize: 13, color: SF_COLORS.muted }}>
@@ -195,8 +201,8 @@
       return (
         <div style={{ ...SF_STYLES.screen, background: SF_COLORS.darkBlue, padding: 24, justifyContent: "center" }}>
           <div style={{ textAlign: "center", marginBottom: 24 }}>
-            {/* LOGO ACTUALIZADO CON LA IMAGEN PROPORCIONADA */}
-            <img src="./logo.jpeg" alt="Smartfood Logo" style={{ width: 100, height: 100, borderRadius: 24, objectFit: "cover", boxShadow: "0 10px 25px rgba(0,0,0,0.4)" }} />
+            <img src="./logo.jpeg" alt="Smartfood Logo" style={{ width: 100, height: 100, objectFit: "contain", borderRadius: 28, marginBottom: 12, boxShadow: "0 10px 25px rgba(0,0,0,0.3)" }} />
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: SF_COLORS.white, letterSpacing: "1px" }}>SMARTFOOD</h1>
           </div>
 
           <SFCard style={{ padding: "32px 24px" }}>
@@ -351,7 +357,6 @@
                 <p style={{ margin: "0 0 8px", fontSize: 12, fontWeight: 800, color: SF_COLORS.darkBlue }}>Nombre del producto</p>
                 <input style={SF_STYLES.input} placeholder="Ej. Manzanas rojas" />
              </label>
-             {/* NOTIFICACIÓN IN-APP (Sustituye al alert) */}
              <SFButton variant="secondary" onClick={() => triggerToast("¡Producto añadido con éxito!")}>Guardar Manualmente</SFButton>
           </SFCard>
         </div>
@@ -389,7 +394,49 @@
       );
     }
 
-    function SCRMoreMenu({ navigateTo }) {
+    // PANTALLA DE PERFIL 
+    function SCRProfile({ onLogoutRequest }) {
+      return (
+        <div style={SF_STYLES.body}>
+          <SFCard style={{ textAlign: "center", padding: "32px 20px" }}>
+            <div style={{ width: 80, height: 80, borderRadius: 40, background: SF_COLORS.blueSoft, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 40, margin: "0 auto 16px", boxShadow: "0 8px 20px rgba(0,0,0,0.1)" }}>👤</div>
+            <h2 style={{ ...SF_STYLES.h2, fontSize: 20 }}>Andrea García</h2>
+            <p style={{ ...SF_STYLES.text, marginTop: 4 }}>andrea@ejemplo.com</p>
+            <div style={{ marginTop: 16 }}><SFTag tone="soft">Plan Gratuito</SFTag></div>
+          </SFCard>
+
+          <SFCard>
+            <h3 style={SF_STYLES.h2}>Mi Impacto Global</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 28, marginBottom: 8 }}>🌍</div>
+                <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.green }}>12 kg</p>
+                <p style={{ margin: "2px 0 0", fontSize: 10, color: SF_COLORS.muted }}>Salvados</p>
+              </div>
+              <div style={{ width: 1, background: SF_COLORS.line }}></div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 28, marginBottom: 8 }}>💰</div>
+                <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.darkBlue }}>S/ 240</p>
+                <p style={{ margin: "2px 0 0", fontSize: 10, color: SF_COLORS.muted }}>Ahorrados</p>
+              </div>
+              <div style={{ width: 1, background: SF_COLORS.line }}></div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 28, marginBottom: 8 }}>🥗</div>
+                <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.orange }}>15</p>
+                <p style={{ margin: "2px 0 0", fontSize: 10, color: SF_COLORS.muted }}>Recetas</p>
+              </div>
+            </div>
+          </SFCard>
+
+          <SFButton variant="secondary" onClick={onLogoutRequest} style={{ marginTop: "auto", border: `2px solid ${SF_COLORS.redSoft}`, color: SF_COLORS.red, background: SF_COLORS.redSoft }}>
+            Cerrar Sesión
+          </SFButton>
+        </div>
+      );
+    }
+
+    // MENÚ DESPLEGABLE (Ahora accesible desde el icono hamburguesa en el Header)
+    function SCRMoreMenu({ navigateTo, onLogoutRequest }) {
       const menuOptions = [
         { id: 'reports', title: "Reportes y Ahorro", icon: "📊", desc: "Métricas de tu consumo." },
         { id: 'shopping', title: "Lista Inteligente", icon: "🛒", desc: "Qué comprar según tu inventario." },
@@ -402,17 +449,26 @@
 
       return (
         <div style={SF_STYLES.body}>
-          <div style={{ display: "grid", gap: 12 }}>
+          <div style={{ display: "grid", gap: 10 }}>
             {menuOptions.map(opt => (
-              <div key={opt.id} onClick={() => navigateTo(opt.id)} style={{ background: SF_COLORS.white, borderRadius: 20, padding: 16, display: "flex", alignItems: "center", gap: 16, cursor: "pointer", border: `1px solid ${SF_COLORS.line}`, boxShadow: "0 4px 12px rgba(26,43,76,0.03)" }}>
-                <div style={{ width: 44, height: 44, background: SF_COLORS.blueSoft, borderRadius: 12, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 20 }}>{opt.icon}</div>
+              <div key={opt.id} onClick={() => navigateTo(opt.id)} style={{ background: SF_COLORS.white, borderRadius: 20, padding: 12, display: "flex", alignItems: "center", gap: 14, cursor: "pointer", border: `1px solid ${SF_COLORS.line}`, boxShadow: "0 2px 8px rgba(26,43,76,0.02)" }}>
+                <div style={{ width: 40, height: 40, background: SF_COLORS.blueSoft, borderRadius: 12, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 18 }}>{opt.icon}</div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: 14, fontWeight: 800, color: SF_COLORS.darkBlue }}>{opt.title}</h3>
-                  <p style={{ margin: "2px 0 0", fontSize: 12, color: SF_COLORS.muted }}>{opt.desc}</p>
+                  <h3 style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.darkBlue }}>{opt.title}</h3>
+                  <p style={{ margin: "2px 0 0", fontSize: 11, color: SF_COLORS.muted }}>{opt.desc}</p>
                 </div>
                 <div style={{ marginLeft: "auto", color: "#ccc", fontSize: 18 }}>›</div>
               </div>
             ))}
+            
+            {/* BOTÓN DE CERRAR SESIÓN EN EL MENÚ */}
+            <div onClick={onLogoutRequest} style={{ background: SF_COLORS.redSoft, borderRadius: 20, padding: 12, display: "flex", alignItems: "center", gap: 14, cursor: "pointer", border: `1px solid ${SF_COLORS.redSoft}`, marginTop: 8 }}>
+              <div style={{ width: 40, height: 40, background: SF_COLORS.white, borderRadius: 12, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 18 }}>🚪</div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.red }}>Cerrar Sesión</h3>
+                <p style={{ margin: "2px 0 0", fontSize: 11, color: SF_COLORS.red }}>Salir de tu cuenta de forma segura.</p>
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -450,7 +506,7 @@
         </div>
       );
     }
-    // Resto de pantallas secundarias estáticas para evitar bloqueos
+    
     function SCRSmartShoppingList() { return <div style={SF_STYLES.body}><SFCard><h2 style={SF_STYLES.h2}>Lista automatizada</h2><p style={SF_STYLES.text}>La app cruza tu inventario con básicos para evitar compras dobles.</p></SFCard></div>; }
     function SCRSearchFood() { return <div style={SF_STYLES.body}><input style={SF_STYLES.input} placeholder="🔍 Escribe 'Tomate' o 'Pollo'..." /></div>; }
     function SCRFoodFilter() { return <div style={SF_STYLES.body}><SFCard><h3 style={SF_STYLES.h2}>Periodo de vencimiento</h3></SFCard></div>; }
@@ -462,23 +518,26 @@
        APLICACIÓN PRINCIPAL Y ESTADOS DE AUTENTICACIÓN
        ======================================================== */
     function App() {
-      // ESTADOS DE AUTENTICACIÓN
       const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-      const [authScreen, setAuthScreen] = React.useState('login'); // 'login' o 'register'
+      const [authScreen, setAuthScreen] = React.useState('login'); 
+      const [showLogoutModal, setShowLogoutModal] = React.useState(false);
       
-      // ESTADOS DE NAVEGACIÓN
       const [currentTab, setCurrentTab] = React.useState('home');
       const [subScreen, setSubScreen] = React.useState(null);
-      
-      // ESTADO DEL TOAST (Notificación in-app)
       const [toastMsg, setToastMsg] = React.useState(null);
 
       const triggerToast = (message) => {
         setToastMsg(message);
-        setTimeout(() => setToastMsg(null), 3000); // Desaparece en 3s
+        setTimeout(() => setToastMsg(null), 3000); 
       };
 
-      // Si NO está autenticado, mostramos los flujos de Login/Registro
+      const handleConfirmLogout = () => {
+        setShowLogoutModal(false);
+        setIsAuthenticated(false);
+        setCurrentTab('home');
+        setSubScreen(null);
+      };
+
       if (!isAuthenticated) {
         if (authScreen === 'login') {
           return <SCRLogin onLogin={() => setIsAuthenticated(true)} onGoToRegister={() => setAuthScreen('register')} />;
@@ -486,16 +545,17 @@
         return <SCRRegister onRegister={() => setIsAuthenticated(true)} onGoToLogin={() => setAuthScreen('login')} />;
       }
 
-      // Si SÍ está autenticado, mostramos el Dashboard Principal
       const mainTabs = {
         'home': { comp: <SCRHomeDashboard navigateTo={setCurrentTab} />, title: "Hola, Andrea", sub: "3 productos requieren atención." },
         'inventory': { comp: <SCRFoodInventory />, title: "Tu Inventario", sub: "Filtra por ubicación y caducidad." },
         'add': { comp: <SCRAddFood triggerToast={triggerToast} />, title: "Registrar Alimento", sub: "Ingreso ultra rápido con IA." },
         'recipes': { comp: <SCRRecipeSuggestions />, title: "Recetas Inteligentes", sub: "Ideas para no desperdiciar." },
-        'menu': { comp: <SCRMoreMenu navigateTo={setSubScreen} />, title: "Opciones", sub: "Configura y analiza tu cuenta." }
+        'profile': { comp: <SCRProfile onLogoutRequest={() => setShowLogoutModal(true)} />, title: "Mi Perfil", sub: "Tus datos y métricas." }
       };
 
+      // El menú ahora es una subpantalla que se abre desde el Header
       const subScreens = {
+        'menu': { comp: <SCRMoreMenu navigateTo={setSubScreen} onLogoutRequest={() => setShowLogoutModal(true)} />, title: "Opciones de App" },
         'reports': { comp: <SCRSavingsReport />, title: "Reporte de Ahorro" },
         'shopping': { comp: <SCRSmartShoppingList />, title: "Lista de Compras" },
         'search': { comp: <SCRSearchFood />, title: "Buscador" },
@@ -510,7 +570,7 @@
         { key: 'inventory', label: 'Inventario', icon: '📦' },
         { key: 'add', label: 'Escanear', icon: '📷' },
         { key: 'recipes', label: 'Recetas', icon: '🥗' },
-        { key: 'menu', label: 'Menú', icon: '☰' }
+        { key: 'profile', label: 'Perfil', icon: '👤' }
       ];
 
       const handleTabChange = (key) => {
@@ -518,12 +578,24 @@
         setSubScreen(null); 
       };
 
+      // LÓGICA DE NAVEGACIÓN DE CABECERA
+      const determineBackAction = () => {
+        if (subScreen && subScreen !== 'menu') return () => setSubScreen('menu'); 
+        if (subScreen === 'menu') return () => setSubScreen(null);
+        if (currentTab !== 'home') return () => setCurrentTab('home'); 
+        return null; 
+      };
+
       const activeData = subScreen ? subScreens[subScreen] : mainTabs[currentTab];
 
       return (
         <div style={SF_STYLES.screen}>
           
-          {/* TOAST DE NOTIFICACIÓN SUPERIOR (Reemplaza a alert) */}
+          {/* MODAL DE CERRAR SESIÓN CUSTOMIZADO */}
+          {showLogoutModal && (
+            <SFLogoutModal onConfirm={handleConfirmLogout} onCancel={() => setShowLogoutModal(false)} />
+          )}
+
           {toastMsg && (
             <div className="toast-notification" style={{ position: "absolute", top: 30, left: "5%", width: "90%", background: SF_COLORS.green, color: SF_COLORS.white, padding: "16px 20px", borderRadius: 16, zIndex: 9999, display: "flex", alignItems: "center", gap: 12, boxShadow: "0 12px 30px rgba(47, 125, 74, 0.4)" }}>
               <span style={{ fontSize: 22 }}>✅</span>
@@ -531,17 +603,19 @@
             </div>
           )}
 
+          {/* HEADER CON BOTÓN DE MENÚ HAMBURGUESA INTEGRADO */}
           <SFHeader 
             title={activeData.title} 
             subtitle={activeData.sub} 
-            onBack={subScreen ? () => setSubScreen(null) : null} 
+            onBack={determineBackAction()} 
+            onOpenMenu={!subScreen ? () => setSubScreen('menu') : null}
           />
           
           {activeData.comp}
 
           <nav style={SF_STYLES.nav}>
             {navItems.map((item) => {
-              const isActive = (!subScreen && currentTab === item.key) || (subScreen && item.key === 'menu');
+              const isActive = (!subScreen && currentTab === item.key);
               return (
                 <div 
                   key={item.key} 
