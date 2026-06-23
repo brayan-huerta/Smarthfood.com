@@ -62,7 +62,7 @@
   <script type="text/babel">
     // PALETA DE COLORES
     const SF_COLORS = {
-      darkBlue: "#1A2B4C", 
+      darkBlue: "#051A3C", 
       blueSoft: "#EAF0F8",
       green: "#2F7D4A",
       greenDark: "#1F5F3A",
@@ -78,8 +78,7 @@
       muted: "#6B7B72",
       line: "rgba(26, 43, 76, 0.1)",
     };
-
-    // ESTILOS NATIVOS A PRUEBA DE FALLOS
+   // ESTILOS NATIVOS A PRUEBA DE FALLOS
     const SF_STYLES = {
       screen: { height: "100%", width: "100%", background: SF_COLORS.bgLight, color: SF_COLORS.ink, fontFamily: "Poppins, Nunito, sans-serif", display: "flex", flexDirection: "column", position: "relative" },
       header: { padding: "54px 20px 20px", background: SF_COLORS.darkBlue, color: SF_COLORS.white, position: "sticky", top: 0, zIndex: 50, boxShadow: "0 4px 20px rgba(26, 43, 76, 0.15)" },
@@ -164,7 +163,8 @@
       return (
         <div style={{ ...SF_STYLES.screen, background: SF_COLORS.darkBlue, padding: 24, justifyContent: "center" }}>
           <div style={{ textAlign: "center", marginBottom: 40 }}>
-            <div style={{ fontSize: 70, marginBottom: 10 }}>🍃</div>
+            {/* LOGO ACTUALIZADO CON LA IMAGEN PROPORCIONADA */}
+            <img src="./logo.jpeg" alt="Smartfood Logo" style={{ width: 120, height: 120, borderRadius: 28, objectFit: "cover", marginBottom: 16, boxShadow: "0 12px 30px rgba(0,0,0,0.4)" }} />
             <h1 style={{ margin: 0, fontSize: 32, fontWeight: 900, color: SF_COLORS.white, letterSpacing: "1px" }}>SMARTFOOD</h1>
             <p style={{ margin: "4px 0 0", fontSize: 14, color: SF_COLORS.blueSoft }}>Sostenibilidad en tu cocina</p>
           </div>
@@ -195,7 +195,8 @@
       return (
         <div style={{ ...SF_STYLES.screen, background: SF_COLORS.darkBlue, padding: 24, justifyContent: "center" }}>
           <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div style={{ fontSize: 50 }}>🍃</div>
+            {/* LOGO ACTUALIZADO CON LA IMAGEN PROPORCIONADA */}
+            <img src="./logo.jpeg" alt="Smartfood Logo" style={{ width: 100, height: 100, borderRadius: 24, objectFit: "cover", boxShadow: "0 10px 25px rgba(0,0,0,0.4)" }} />
           </div>
 
           <SFCard style={{ padding: "32px 24px" }}>
