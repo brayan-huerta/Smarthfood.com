@@ -96,7 +96,6 @@
       return { label: `Quedan ${days} días`, color: SF_COLORS.greenDark, bg: SF_COLORS.greenSoft };
     }
 
-    // MODAL DE CIERRE DE SESIÓN CUSTOMIZADO
     function SFLogoutModal({ onConfirm, onCancel }) {
       return (
         <div className="modal-overlay">
@@ -113,13 +112,10 @@
       );
     }
 
-    // CABECERA CON MENÚ HAMBURGUESA A LA IZQUIERDA
     function SFHeader({ title, subtitle, onBack, onOpenMenu }) {
       return (
         <header style={SF_STYLES.header}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-            
-            {/* LADO IZQUIERDO: Botón de Atrás O Menú Hamburguesa */}
             {onBack ? (
               <button onClick={onBack} style={{ background: "rgba(255,255,255,0.2)", border: "none", color: "#FFF", borderRadius: 12, width: 40, height: 40, fontSize: 18, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, padding: 0 }}>←</button>
             ) : onOpenMenu ? (
@@ -130,13 +126,11 @@
               <div style={{ width: 40, height: 40, flexShrink: 0 }}></div>
             )}
             
-            {/* TEXTOS CENTRALES */}
             <div style={{ flex: 1 }}>
               <p style={{ margin: 0, fontSize: 11, fontWeight: 800, letterSpacing: "0.05em", color: SF_COLORS.blueSoft }}>SMARTFOOD AI</p>
               <h1 style={{ ...SF_STYLES.title, color: SF_COLORS.white }}>{title}</h1>
               {subtitle && <p style={{ margin: "4px 0 0", fontSize: 13, color: "rgba(255,255,255,0.8)" }}>{subtitle}</p>}
             </div>
-            
           </div>
         </header>
       );
@@ -186,7 +180,7 @@
             <div style={{ textAlign: "center", margin: "24px 0 16px", color: SF_COLORS.muted, fontSize: 12, fontWeight: 700 }}>O ingresa con</div>
             
             <SFButton variant="secondary" style={{ border: `1px solid ${SF_COLORS.line}`, color: SF_COLORS.ink, boxShadow: "none" }}>
-              <img src="./google.png" alt="Google" style={{ width: 18, height: 18, marginRight: 8 }} /> Continuar con Google
+              <img src="./google.jpg" alt="Google" style={{ width: 18, height: 18, marginRight: 8 }} /> Continuar con Google
             </SFButton>
 
             <p style={{ textAlign: "center", margin: "24px 0 0", fontSize: 13, color: SF_COLORS.muted }}>
@@ -228,6 +222,7 @@
 
     function SCRHomeDashboard({ navigateTo }) {
       const [showPush, setShowPush] = React.useState(true);
+      const criticalItems = SF_INVENTORY.filter((item) => item.expiresIn <= 3).sort((a, b) => a.expiresIn - b.expiresIn).slice(0, 2);
 
       return (
         <div style={SF_STYLES.body}>
@@ -255,7 +250,7 @@
             </div>
           </div>
 
-          <h2 style={SF_STYLES.h2}>Receta sugerida para ti</h2>
+          <h2 style={{ ...SF_STYLES.h2, marginTop: 4 }}>Receta sugerida para ti</h2>
           
           <SFCard onClick={() => navigateTo('recipes')} style={{ transition: "transform 0.1s" }}>
             <div style={SF_STYLES.row}>
@@ -267,13 +262,34 @@
               <div style={{ width: 70, height: 70, background: SF_COLORS.blueSoft, borderRadius: 20, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 36 }}>🥗</div>
             </div>
           </SFCard>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
+            <h2 style={SF_STYLES.h2}>Próximos a vencer</h2>
+            <span onClick={() => navigateTo('inventory')} style={{ fontSize: 12, color: SF_COLORS.green, fontWeight: 800, cursor: "pointer" }}>Ver todo ›</span>
+          </div>
+
+          <div style={{ display: "grid", gap: 12 }}>
+            {criticalItems.map((item) => {
+              const meta = SFStatusMeta(item.expiresIn);
+              return (
+                <div key={item.id} style={{ background: SF_COLORS.white, borderRadius: 20, padding: 12, display: "flex", alignItems: "center", gap: 12, border: `1px solid ${SF_COLORS.line}` }}>
+                  <div style={{ width: 44, height: 44, background: SF_COLORS.bgLight, borderRadius: 12, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 20, flexShrink: 0 }}>{item.icon}</div>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ margin: 0, fontSize: 14, fontWeight: 800, color: SF_COLORS.ink }}>{item.name}</h3>
+                    <p style={{ margin: "2px 0 0", fontSize: 11, color: SF_COLORS.muted }}>{item.location}</p>
+                  </div>
+                  <span style={{ ...SF_STYLES.chip, background: meta.bg, color: meta.color, fontSize: 10, padding: "4px 8px" }}>{meta.label}</span>
+                </div>
+              );
+            })}
+          </div>
+
         </div>
       );
     }
 
     function SCRFoodInventory() {
       const [activeFilter, setActiveFilter] = React.useState("Todo");
-
       const totalCount = SF_INVENTORY.length;
       const refriCount = SF_INVENTORY.filter(i => i.location === "Refrigeradora").length;
       const despensaCount = SF_INVENTORY.filter(i => i.location === "Despensa").length;
@@ -286,45 +302,31 @@
       return (
         <div style={SF_STYLES.body}>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-start" }}>
-            <span onClick={() => setActiveFilter("Todo")} style={{ ...SF_STYLES.chip, background: activeFilter === "Todo" ? SF_COLORS.darkBlue : SF_COLORS.white, color: activeFilter === "Todo" ? SF_COLORS.white : SF_COLORS.darkBlue, border: `1px solid ${activeFilter === "Todo" ? SF_COLORS.darkBlue : SF_COLORS.line}` }}>
-              Todo ({totalCount})
-            </span>
-            <span onClick={() => setActiveFilter("Refrigeradora")} style={{ ...SF_STYLES.chip, background: activeFilter === "Refrigeradora" ? SF_COLORS.darkBlue : SF_COLORS.white, color: activeFilter === "Refrigeradora" ? SF_COLORS.white : SF_COLORS.darkBlue, border: `1px solid ${activeFilter === "Refrigeradora" ? SF_COLORS.darkBlue : SF_COLORS.line}` }}>
-              ❄️ Refri ({refriCount})
-            </span>
-            <span onClick={() => setActiveFilter("Despensa")} style={{ ...SF_STYLES.chip, background: activeFilter === "Despensa" ? SF_COLORS.darkBlue : SF_COLORS.white, color: activeFilter === "Despensa" ? SF_COLORS.white : SF_COLORS.darkBlue, border: `1px solid ${activeFilter === "Despensa" ? SF_COLORS.darkBlue : SF_COLORS.line}` }}>
-              🧺 Despensa ({despensaCount})
-            </span>
+            <span onClick={() => setActiveFilter("Todo")} style={{ ...SF_STYLES.chip, background: activeFilter === "Todo" ? SF_COLORS.darkBlue : SF_COLORS.white, color: activeFilter === "Todo" ? SF_COLORS.white : SF_COLORS.darkBlue, border: `1px solid ${activeFilter === "Todo" ? SF_COLORS.darkBlue : SF_COLORS.line}` }}>Todo ({totalCount})</span>
+            <span onClick={() => setActiveFilter("Refrigeradora")} style={{ ...SF_STYLES.chip, background: activeFilter === "Refrigeradora" ? SF_COLORS.darkBlue : SF_COLORS.white, color: activeFilter === "Refrigeradora" ? SF_COLORS.white : SF_COLORS.darkBlue, border: `1px solid ${activeFilter === "Refrigeradora" ? SF_COLORS.darkBlue : SF_COLORS.line}` }}>❄️ Refri ({refriCount})</span>
+            <span onClick={() => setActiveFilter("Despensa")} style={{ ...SF_STYLES.chip, background: activeFilter === "Despensa" ? SF_COLORS.darkBlue : SF_COLORS.white, color: activeFilter === "Despensa" ? SF_COLORS.white : SF_COLORS.darkBlue, border: `1px solid ${activeFilter === "Despensa" ? SF_COLORS.darkBlue : SF_COLORS.line}` }}>🧺 Despensa ({despensaCount})</span>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {displayedInventory.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "40px 20px", color: SF_COLORS.muted }}>
-                <div style={{ fontSize: 40, marginBottom: 10 }}>📭</div>
-                <p style={{ margin: 0, fontWeight: 700 }}>No hay productos aquí.</p>
-              </div>
-            ) : (
-              displayedInventory.map((item) => {
-                const meta = SFStatusMeta(item.expiresIn);
-                const progressWidth = Math.max(0, Math.min(100, (item.expiresIn / item.maxLife) * 100));
-                
-                return (
-                  <div key={item.id} style={{ background: SF_COLORS.white, borderRadius: 20, padding: 16, display: "flex", alignItems: "center", gap: 16, border: `1px solid ${SF_COLORS.line}` }}>
-                    <div style={{ width: 50, height: 50, background: SF_COLORS.bgLight, borderRadius: 14, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 24, flexShrink: 0 }}>{item.icon}</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <h3 style={{ margin: 0, fontSize: 14, fontWeight: 800, color: SF_COLORS.ink }}>{item.name}</h3>
-                        <span style={{ ...SF_STYLES.chip, background: meta.bg, color: meta.color, fontSize: 10, padding: "4px 8px" }}>{meta.label}</span>
-                      </div>
-                      <p style={{ margin: "4px 0 8px", fontSize: 12, color: SF_COLORS.muted }}>{item.qty} · {item.category}</p>
-                      <div style={{ height: 6, background: SF_COLORS.bgLight, borderRadius: 3, overflow: "hidden", width: "100%" }}>
-                        <div style={{ width: `${progressWidth}%`, height: "100%", background: meta.color, borderRadius: 3 }}></div>
-                      </div>
+            {displayedInventory.map((item) => {
+              const meta = SFStatusMeta(item.expiresIn);
+              const progressWidth = Math.max(0, Math.min(100, (item.expiresIn / item.maxLife) * 100));
+              return (
+                <div key={item.id} style={{ background: SF_COLORS.white, borderRadius: 20, padding: 16, display: "flex", alignItems: "center", gap: 16, border: `1px solid ${SF_COLORS.line}` }}>
+                  <div style={{ width: 50, height: 50, background: SF_COLORS.bgLight, borderRadius: 14, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 24, flexShrink: 0 }}>{item.icon}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <h3 style={{ margin: 0, fontSize: 14, fontWeight: 800, color: SF_COLORS.ink }}>{item.name}</h3>
+                      <span style={{ ...SF_STYLES.chip, background: meta.bg, color: meta.color, fontSize: 10, padding: "4px 8px" }}>{meta.label}</span>
+                    </div>
+                    <p style={{ margin: "4px 0 8px", fontSize: 12, color: SF_COLORS.muted }}>{item.qty} · {item.category}</p>
+                    <div style={{ height: 6, background: SF_COLORS.bgLight, borderRadius: 3, overflow: "hidden", width: "100%" }}>
+                      <div style={{ width: `${progressWidth}%`, height: "100%", background: meta.color, borderRadius: 3 }}></div>
                     </div>
                   </div>
-                );
-              })
-            )}
+                </div>
+              );
+            })}
           </div>
         </div>
       );
@@ -335,9 +337,7 @@
         <div style={SF_STYLES.body}>
           <div style={{ background: "#000", borderRadius: 32, height: 320, position: "relative", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center", boxShadow: "0 12px 30px rgba(0,0,0,0.2)" }}>
             <img src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=400&q=80" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }} alt="Camera feed" />
-            <div style={{ position: "absolute", top: "10%", width: "80%", height: "60%", border: "2px dashed rgba(255,255,255,0.7)", borderRadius: 20 }}>
-               <div className="scanner-line"></div>
-            </div>
+            <div style={{ position: "absolute", top: "10%", width: "80%", height: "60%", border: "2px dashed rgba(255,255,255,0.7)", borderRadius: 20 }}><div className="scanner-line"></div></div>
             <div style={{ position: "absolute", bottom: 20, textAlign: "center", color: "#FFF", width: "100%" }}>
               <div style={{ width: 66, height: 66, background: "rgba(255,255,255,0.3)", borderRadius: 33, display: "flex", justifyContent: "center", alignItems: "center", margin: "0 auto", cursor: "pointer", border: "2px solid #FFF" }}>
                 <div style={{ width: 54, height: 54, background: "#FFF", borderRadius: 27 }}></div>
@@ -383,9 +383,7 @@
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
                 <SFTag>⏱️ {recipe.time}</SFTag>
                 {recipe.uses.map((food) => (
-                  <span key={food} style={{...SF_STYLES.chip, background: SF_COLORS.bgLight, border: `1px solid ${SF_COLORS.line}`, padding: "6px 10px", fontSize: 10, color: SF_COLORS.ink }}>
-                    {food}
-                  </span>
+                  <span key={food} style={{...SF_STYLES.chip, background: SF_COLORS.bgLight, border: `1px solid ${SF_COLORS.line}`, padding: "6px 10px", fontSize: 10, color: SF_COLORS.ink }}>{food}</span>
                 ))}
               </div>
             </SFCard>
@@ -394,7 +392,6 @@
       );
     }
 
-    // PANTALLA DE PERFIL 
     function SCRProfile({ onLogoutRequest }) {
       return (
         <div style={SF_STYLES.body}>
@@ -408,23 +405,11 @@
           <SFCard>
             <h3 style={SF_STYLES.h2}>Mi Impacto Global</h3>
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 20 }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>🌍</div>
-                <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.green }}>12 kg</p>
-                <p style={{ margin: "2px 0 0", fontSize: 10, color: SF_COLORS.muted }}>Salvados</p>
-              </div>
+              <div style={{ textAlign: "center" }}><div style={{ fontSize: 28, marginBottom: 8 }}>🌍</div><p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.green }}>12 kg</p><p style={{ margin: "2px 0 0", fontSize: 10, color: SF_COLORS.muted }}>Salvados</p></div>
               <div style={{ width: 1, background: SF_COLORS.line }}></div>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>💰</div>
-                <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.darkBlue }}>S/ 240</p>
-                <p style={{ margin: "2px 0 0", fontSize: 10, color: SF_COLORS.muted }}>Ahorrados</p>
-              </div>
+              <div style={{ textAlign: "center" }}><div style={{ fontSize: 28, marginBottom: 8 }}>💰</div><p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.darkBlue }}>S/ 240</p><p style={{ margin: "2px 0 0", fontSize: 10, color: SF_COLORS.muted }}>Ahorrados</p></div>
               <div style={{ width: 1, background: SF_COLORS.line }}></div>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>🥗</div>
-                <p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.orange }}>15</p>
-                <p style={{ margin: "2px 0 0", fontSize: 10, color: SF_COLORS.muted }}>Recetas</p>
-              </div>
+              <div style={{ textAlign: "center" }}><div style={{ fontSize: 28, marginBottom: 8 }}>🥗</div><p style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.orange }}>15</p><p style={{ margin: "2px 0 0", fontSize: 10, color: SF_COLORS.muted }}>Recetas</p></div>
             </div>
           </SFCard>
 
@@ -435,8 +420,8 @@
       );
     }
 
-    // MENÚ DESPLEGABLE (Ahora accesible desde el icono hamburguesa en el Header)
-    function SCRMoreMenu({ navigateTo, onLogoutRequest }) {
+    // MENÚ PRINCIPAL DESPLEGABLE (Con la funcionalidad Toast para botones inactivos en MVP)
+    function SCRMoreMenu({ navigateTo, onLogoutRequest, triggerToast }) {
       const menuOptions = [
         { id: 'reports', title: "Reportes y Ahorro", icon: "📊", desc: "Métricas de tu consumo." },
         { id: 'shopping', title: "Lista Inteligente", icon: "🛒", desc: "Qué comprar según tu inventario." },
@@ -447,11 +432,19 @@
         { id: 'prefs', title: "Configuración", icon: "⚙️", desc: "Preferencias de alertas." }
       ];
 
+      const handleOptionClick = (id) => {
+        if (id === 'reports') {
+          navigateTo(id);
+        } else {
+          triggerToast("Esta función se agregará en futuras actualizaciones 🚀");
+        }
+      };
+
       return (
         <div style={SF_STYLES.body}>
           <div style={{ display: "grid", gap: 10 }}>
             {menuOptions.map(opt => (
-              <div key={opt.id} onClick={() => navigateTo(opt.id)} style={{ background: SF_COLORS.white, borderRadius: 20, padding: 12, display: "flex", alignItems: "center", gap: 14, cursor: "pointer", border: `1px solid ${SF_COLORS.line}`, boxShadow: "0 2px 8px rgba(26,43,76,0.02)" }}>
+              <div key={opt.id} onClick={() => handleOptionClick(opt.id)} style={{ background: SF_COLORS.white, borderRadius: 20, padding: 12, display: "flex", alignItems: "center", gap: 14, cursor: "pointer", border: `1px solid ${SF_COLORS.line}`, boxShadow: "0 2px 8px rgba(26,43,76,0.02)" }}>
                 <div style={{ width: 40, height: 40, background: SF_COLORS.blueSoft, borderRadius: 12, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 18 }}>{opt.icon}</div>
                 <div>
                   <h3 style={{ margin: 0, fontSize: 13, fontWeight: 800, color: SF_COLORS.darkBlue }}>{opt.title}</h3>
@@ -461,7 +454,6 @@
               </div>
             ))}
             
-            {/* BOTÓN DE CERRAR SESIÓN EN EL MENÚ */}
             <div onClick={onLogoutRequest} style={{ background: SF_COLORS.redSoft, borderRadius: 20, padding: 12, display: "flex", alignItems: "center", gap: 14, cursor: "pointer", border: `1px solid ${SF_COLORS.redSoft}`, marginTop: 8 }}>
               <div style={{ width: 40, height: 40, background: SF_COLORS.white, borderRadius: 12, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 18 }}>🚪</div>
               <div>
@@ -474,7 +466,7 @@
       );
     }
 
-    /* PANTALLAS SECUNDARIAS */
+    /* PANTALLA SECUNDARIA ACTIVA */
     function SCRSavingsReport() {
       return (
         <div style={SF_STYLES.body}>
@@ -507,12 +499,13 @@
       );
     }
     
-    function SCRSmartShoppingList() { return <div style={SF_STYLES.body}><SFCard><h2 style={SF_STYLES.h2}>Lista automatizada</h2><p style={SF_STYLES.text}>La app cruza tu inventario con básicos para evitar compras dobles.</p></SFCard></div>; }
-    function SCRSearchFood() { return <div style={SF_STYLES.body}><input style={SF_STYLES.input} placeholder="🔍 Escribe 'Tomate' o 'Pollo'..." /></div>; }
-    function SCRFoodFilter() { return <div style={SF_STYLES.body}><SFCard><h3 style={SF_STYLES.h2}>Periodo de vencimiento</h3></SFCard></div>; }
-    function SCRStorageTips() { return <div style={SF_STYLES.body}><SFCard><div style={{ fontSize: 32 }}>🍎</div><h3 style={SF_STYLES.h2}>Separa frutas maduras</h3></SFCard></div>; }
-    function SCRShareInventory() { return <div style={SF_STYLES.body}><SFCard style={{textAlign: "center"}}><h2 style={SF_STYLES.h2}>Cocina Compartida</h2></SFCard></div>; }
-    function SCRAppPreferences() { return <div style={SF_STYLES.body}><SFCard><h3 style={SF_STYLES.h2}>Días previos para Alerta</h3></SFCard></div>; }
+    // Pantallas estáticas reservadas para el código (se accederá a ellas en futuras versiones)
+    function SCRSmartShoppingList() { return <div style={SF_STYLES.body}></div>; }
+    function SCRSearchFood() { return <div style={SF_STYLES.body}></div>; }
+    function SCRFoodFilter() { return <div style={SF_STYLES.body}></div>; }
+    function SCRStorageTips() { return <div style={SF_STYLES.body}></div>; }
+    function SCRShareInventory() { return <div style={SF_STYLES.body}></div>; }
+    function SCRAppPreferences() { return <div style={SF_STYLES.body}></div>; }
 
     /* ========================================================
        APLICACIÓN PRINCIPAL Y ESTADOS DE AUTENTICACIÓN
@@ -553,9 +546,8 @@
         'profile': { comp: <SCRProfile onLogoutRequest={() => setShowLogoutModal(true)} />, title: "Mi Perfil", sub: "Tus datos y métricas." }
       };
 
-      // El menú ahora es una subpantalla que se abre desde el Header
       const subScreens = {
-        'menu': { comp: <SCRMoreMenu navigateTo={setSubScreen} onLogoutRequest={() => setShowLogoutModal(true)} />, title: "Opciones de App" },
+        'menu': { comp: <SCRMoreMenu navigateTo={setSubScreen} onLogoutRequest={() => setShowLogoutModal(true)} triggerToast={triggerToast} />, title: "Opciones de App" },
         'reports': { comp: <SCRSavingsReport />, title: "Reporte de Ahorro" },
         'shopping': { comp: <SCRSmartShoppingList />, title: "Lista de Compras" },
         'search': { comp: <SCRSearchFood />, title: "Buscador" },
@@ -578,7 +570,6 @@
         setSubScreen(null); 
       };
 
-      // LÓGICA DE NAVEGACIÓN DE CABECERA
       const determineBackAction = () => {
         if (subScreen && subScreen !== 'menu') return () => setSubScreen('menu'); 
         if (subScreen === 'menu') return () => setSubScreen(null);
@@ -591,7 +582,6 @@
       return (
         <div style={SF_STYLES.screen}>
           
-          {/* MODAL DE CERRAR SESIÓN CUSTOMIZADO */}
           {showLogoutModal && (
             <SFLogoutModal onConfirm={handleConfirmLogout} onCancel={() => setShowLogoutModal(false)} />
           )}
@@ -603,7 +593,6 @@
             </div>
           )}
 
-          {/* HEADER CON BOTÓN DE MENÚ HAMBURGUESA INTEGRADO */}
           <SFHeader 
             title={activeData.title} 
             subtitle={activeData.sub} 
